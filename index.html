@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="timer-wrapper">
+            <h1>Pomodoro Timer</h1>
+            
+            <div class="color-selector">
+                <label class="color-selector-label">Color Theme:</label>
+                <div class="color-options">
+                    <button class="color-option" data-theme="forest" title="Forest">
+                        <span class="color-preview" style="background: linear-gradient(135deg, #6b8e5a 0%, #4a6b3a 100%);"></span>
+                        <span class="color-name">Forest</span>
+                    </button>
+                    <button class="color-option" data-theme="desert" title="Desert">
+                        <span class="color-preview" style="background: linear-gradient(135deg, #c9a882 0%, #a6896b 100%);"></span>
+                        <span class="color-name">Desert</span>
+                    </button>
+                    <button class="color-option" data-theme="autumn" title="Autumn">
+                        <span class="color-preview" style="background: linear-gradient(135deg, #c97d60 0%, #a85d45 100%);"></span>
+                        <span class="color-name">Autumn</span>
+                    </button>
+                    <button class="color-option" data-theme="sage" title="Sage">
+                        <span class="color-preview" style="background: linear-gradient(135deg, #9aaf88 0%, #7a9570 100%);"></span>
+                        <span class="color-name">Sage</span>
+                    </button>
+                    <button class="color-option" data-theme="terracotta" title="Terracotta">
+                        <span class="color-preview" style="background: linear-gradient(135deg, #b8735a 0%, #965a45 100%);"></span>
+                        <span class="color-name">Terracotta</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mode-selector">
+                <div class="mode-item">
+                    <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
+                    <div class="duration-input-container">
+                        <input type="number" class="duration-input" id="pomodoro-duration" min="1" max="99" value="25" data-mode="pomodoro">
+                        <span class="duration-label">min</span>
+                    </div>
+                </div>
+                <div class="mode-item">
+                    <button class="mode-btn" data-mode="short-break">Short Break</button>
+                    <div class="duration-input-container">
+                        <input type="number" class="duration-input" id="short-break-duration" min="1" max="99" value="5" data-mode="short-break">
+                        <span class="duration-label">min</span>
+                    </div>
+                </div>
+                <div class="mode-item">
+                    <button class="mode-btn" data-mode="long-break">Long Break</button>
+                    <div class="duration-input-container">
+                        <input type="number" class="duration-input" id="long-break-duration" min="1" max="99" value="15" data-mode="long-break">
+                        <span class="duration-label">min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timer-display">
+                <div class="timer-circle">
+                    <svg class="progress-ring" width="300" height="300">
+                        <circle class="progress-ring-circle-bg" cx="150" cy="150" r="140"></circle>
+                        <circle class="progress-ring-circle" cx="150" cy="150" r="140"></circle>
+                    </svg>
+                    <div class="timer-text">
+                        <div class="time-display" id="time-display">25:00</div>
+                        <div class="timer-status" id="timer-status">Ready to Focus</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn" id="start-btn">Start</button>
+                <button class="control-btn" id="pause-btn" style="display: none;">Pause</button>
+                <button class="control-btn" id="reset-btn">Reset</button>
+            </div>
+            
+            <div class="session-info">
+                <p>Session: <span id="session-count">0</span></p>
+            </div>
+            
+            <div class="graph-section">
+                <h2 class="graph-title">Weekly Focus Time</h2>
+                <canvas id="focus-graph" width="400" height="200"></canvas>
+                <div class="graph-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Today:</span>
+                        <span class="stat-value" id="today-time">0 min</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">This Week:</span>
+                        <span class="stat-value" id="week-time">0 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>
