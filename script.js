@@ -9,6 +9,7 @@ class PomodoroTimer {
     constructor() {
         // Initialize storage and load data
         this.durations = StorageManager.loadDurations();
+        this.notificationAlarm = StorageManager.loadNotificationAlarm();
         this.sessionCount = 0;
         
         // Initialize timer with tick callback
@@ -52,6 +53,9 @@ class PomodoroTimer {
         // Initialize UI state
         this.ui.initializeDurationInputs(this.durations);
         this.ui.updateBodyClass(this.timer.mode);
+        if (this.notificationAlarmSelect) {
+            this.notificationAlarmSelect.value = this.notificationAlarm;
+        }
         
         // Clean up old data and update display
         StorageManager.cleanupOldFocusData();
@@ -73,7 +77,8 @@ class PomodoroTimer {
         this.startBtn = document.getElementById('start-btn');
         this.pauseBtn = document.getElementById('pause-btn');
         this.resetBtn = document.getElementById('reset-btn');
-        this.testSoundBtn = document.getElementById('test-sound-btn');
+        this.notificationAlarmSelect = document.getElementById('notification-alarm');
+        this.testAlarmBtn = document.getElementById('test-alarm-btn');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.durationInputs = document.querySelectorAll('.duration-input');
         this.progressCircle = document.querySelector('.progress-ring-circle');
@@ -95,8 +100,16 @@ class PomodoroTimer {
         if (this.resetBtn) {
             this.resetBtn.addEventListener('click', () => this.reset());
         }
-        if (this.testSoundBtn) {
-            this.testSoundBtn.addEventListener('click', () => NotificationManager.playSound());
+        if (this.testAlarmBtn) {
+            this.testAlarmBtn.addEventListener('click', () => {
+                NotificationManager.playSound(this.notificationAlarm);
+            });
+        }
+        if (this.notificationAlarmSelect) {
+            this.notificationAlarmSelect.addEventListener('change', (e) => {
+                this.notificationAlarm = e.target.value;
+                StorageManager.saveNotificationAlarm(this.notificationAlarm);
+            });
         }
         
         // Mode selection
@@ -231,7 +244,7 @@ class PomodoroTimer {
         this.ui.setButtonStates(false);
         this.ui.updateDurationInputsState(false);
         
-        NotificationManager.playSound();
+        NotificationManager.playSound(this.notificationAlarm);
         
         // Update session count for completed pomodoros
         if (this.timer.mode === 'pomodoro') {

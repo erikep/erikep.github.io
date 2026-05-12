@@ -1,4 +1,4 @@
-import { DEFAULT_DURATIONS, STORAGE_KEYS } from './config.js';
+import { DEFAULT_DURATIONS, DEFAULT_NOTIFICATION_ALARM, NOTIFICATION_ALARMS, STORAGE_KEYS } from './config.js';
 
 export class StorageManager {
     static loadDurations() {
@@ -30,6 +30,17 @@ export class StorageManager {
             'long-break': durations['long-break'] / 60
         };
         localStorage.setItem(STORAGE_KEYS.DURATIONS, JSON.stringify(toSave));
+    }
+
+    static loadNotificationAlarm() {
+        const saved = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_ALARM);
+        const validAlarms = Object.values(NOTIFICATION_ALARMS);
+        
+        return validAlarms.includes(saved) ? saved : DEFAULT_NOTIFICATION_ALARM;
+    }
+    
+    static saveNotificationAlarm(alarm) {
+        localStorage.setItem(STORAGE_KEYS.NOTIFICATION_ALARM, alarm);
     }
     
     static loadFocusData() {

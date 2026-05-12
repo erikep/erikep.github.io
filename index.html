@@ -54,10 +54,18 @@
                 <button class="control-btn" id="reset-btn">Reset</button>
             </div>
 
-            <div class="sound-test">
-                <button class="sound-test-btn" id="test-sound-btn" type="button">Test Notification Alarm</button>
+            <div class="notification-menu">
+                <label class="notification-label" for="notification-alarm">Notification alarm</label>
+                <div class="notification-controls">
+                    <select class="notification-select" id="notification-alarm">
+                        <option value="original">Original Beep</option>
+                        <option value="relaxing-chime">Relaxing Chime</option>
+                        <option value="urgent-alert">Urgent Alert</option>
+                    </select>
+                    <button class="notification-test-btn" id="test-alarm-btn" type="button">Test Alarm</button>
+                </div>
             </div>
-            
+
             <div class="session-info">
                 <p>Session: <span id="session-count">0</span></p>
             </div>
