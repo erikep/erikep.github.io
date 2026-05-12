@@ -47,76 +47,6 @@ h1 {
     transition: color 0.5s ease;
 }
 
-.color-selector {
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.color-selector-label {
-    display: block;
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.color-options {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.color-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    padding: 8px 12px;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 70px;
-}
-
-.color-option:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(var(--text-color-rgb, 115, 90, 74), 0.3);
-    transform: translateY(-2px);
-}
-
-.color-option.active {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: var(--text-color);
-    box-shadow: 0 2px 8px rgba(var(--text-color-rgb, 115, 90, 74), 0.2);
-}
-
-.color-preview {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.color-option:hover .color-preview {
-    transform: scale(1.1);
-}
-
-.color-name {
-    font-size: 0.75rem;
-    color: #666;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.color-option.active .color-name {
-    color: var(--text-color);
-    font-weight: 600;
-}
-
 .mode-selector {
     display: flex;
     gap: 10px;
@@ -449,24 +379,6 @@ body.long-break-mode {
     .duration-input {
         width: 45px;
         font-size: 0.85rem;
-    }
-    
-    .color-options {
-        gap: 6px;
-    }
-    
-    .color-option {
-        min-width: 60px;
-        padding: 6px 8px;
-    }
-    
-    .color-preview {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .color-name {
-        font-size: 0.7rem;
     }
     
     .graph-section {

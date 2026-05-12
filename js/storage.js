@@ -1,4 +1,4 @@
-import { DEFAULT_DURATIONS, STORAGE_KEYS, DEFAULT_THEME } from './config.js';
+import { DEFAULT_DURATIONS, STORAGE_KEYS } from './config.js';
 
 export class StorageManager {
     static loadDurations() {
@@ -30,14 +30,6 @@ export class StorageManager {
             'long-break': durations['long-break'] / 60
         };
         localStorage.setItem(STORAGE_KEYS.DURATIONS, JSON.stringify(toSave));
-    }
-    
-    static loadTheme() {
-        return localStorage.getItem(STORAGE_KEYS.THEME) || DEFAULT_THEME;
-    }
-    
-    static saveTheme(theme) {
-        localStorage.setItem(STORAGE_KEYS.THEME, theme);
     }
     
     static loadFocusData() {

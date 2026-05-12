@@ -1,6 +1,5 @@
 import { DEFAULT_DURATIONS } from './js/config.js';
 import { StorageManager } from './js/storage.js';
-import { ColorManager } from './js/colorManager.js';
 import { FocusGraph } from './js/graph.js';
 import { Timer } from './js/timer.js';
 import { UI } from './js/ui.js';
@@ -24,8 +23,7 @@ class PomodoroTimer {
         // Initialize UI elements
         this.initializeElements();
         
-        // Initialize managers
-        this.colorManager = new ColorManager(this.root, this.colorOptions);
+        // Initialize UI helpers
         this.ui = new UI({
             timeDisplay: this.timeDisplay,
             timerStatus: this.timerStatus,
@@ -53,8 +51,6 @@ class PomodoroTimer {
         
         // Initialize UI state
         this.ui.initializeDurationInputs(this.durations);
-        this.colorManager.updateColorButtons();
-        this.colorManager.applyColors();
         this.ui.updateBodyClass(this.timer.mode);
         
         // Clean up old data and update display
@@ -79,14 +75,12 @@ class PomodoroTimer {
         this.resetBtn = document.getElementById('reset-btn');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.durationInputs = document.querySelectorAll('.duration-input');
-        this.colorOptions = document.querySelectorAll('.color-option');
         this.progressCircle = document.querySelector('.progress-ring-circle');
         this.graphCanvas = document.getElementById('focus-graph');
         this.graphCtx = this.graphCanvas ? this.graphCanvas.getContext('2d') : null;
         this.todayTimeEl = document.getElementById('today-time');
         this.weekTimeEl = document.getElementById('week-time');
         this.body = document.body;
-        this.root = document.documentElement;
     }
     
     setupEventListeners() {
@@ -128,14 +122,6 @@ class PomodoroTimer {
                 if (this.timer.isRunning) {
                     input.blur();
                 }
-            });
-        });
-        
-        // Color theme selection
-        this.colorOptions.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const theme = e.currentTarget.dataset.theme;
-                this.colorManager.setTheme(theme);
             });
         });
         
