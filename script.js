@@ -55,6 +55,7 @@ class PomodoroTimer {
         this.ui.initializeDurationInputs(this.durations);
         this.colorManager.updateColorButtons();
         this.colorManager.applyColors();
+        this.ui.updateBodyClass(this.timer.mode);
         
         // Clean up old data and update display
         StorageManager.cleanupOldFocusData();

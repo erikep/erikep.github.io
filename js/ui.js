@@ -50,11 +50,16 @@ export class UI {
     }
     
     updateBodyClass(mode) {
-        this.body.className = '';
-        if (mode === 'short-break') {
-            this.body.classList.add('short-break-mode');
-        } else if (mode === 'long-break') {
-            this.body.classList.add('long-break-mode');
+        const modeClasses = {
+            pomodoro: 'pomodoro-mode',
+            'short-break': 'short-break-mode',
+            'long-break': 'long-break-mode'
+        };
+        
+        this.body.classList.remove(...Object.values(modeClasses));
+        
+        if (modeClasses[mode]) {
+            this.body.classList.add(modeClasses[mode]);
         }
     }
     

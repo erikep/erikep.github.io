@@ -5,11 +5,13 @@
 }
 
 :root {
-    --primary-color: #c97d60;
-    --secondary-color: #d4a574;
-    --text-color: #8b5a3c;
-    --active-gradient-start: #c97d60;
-    --active-gradient-end: #d4a574;
+    --primary-color: #5f8f8b;
+    --secondary-color: #3f6f73;
+    --text-color: #2f5558;
+    --active-gradient-start: #5f8f8b;
+    --active-gradient-end: #3f6f73;
+    --text-color-rgb: 47, 85, 88;
+    --surface-color: rgba(232, 241, 239, 0.96);
 }
 
 body {
@@ -29,11 +31,12 @@ body {
 }
 
 .timer-wrapper {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface-color);
     border-radius: 30px;
     padding: 40px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     text-align: center;
+    transition: background 0.5s ease;
 }
 
 h1 {
@@ -119,9 +122,10 @@ h1 {
     gap: 10px;
     justify-content: center;
     margin-bottom: 40px;
-    background: #f0f0f0;
+    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.08);
     padding: 10px 5px;
     border-radius: 15px;
+    transition: background 0.5s ease;
 }
 
 .mode-item {
@@ -291,12 +295,13 @@ h1 {
 }
 
 #reset-btn {
-    background: #f0f0f0;
+    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.08);
     color: #666;
+    transition: all 0.3s ease;
 }
 
 #reset-btn:hover {
-    background: #e0e0e0;
+    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.14);
 }
 
 .session-info {
@@ -362,12 +367,37 @@ h1 {
     transition: color 0.5s ease;
 }
 
-/* Break mode styling - will be overridden by random colors */
+/* Mode palettes override any selected global theme. */
+body.pomodoro-mode {
+    --primary-color: #5f8f8b;
+    --secondary-color: #3f6f73;
+    --text-color: #2f5558;
+    --active-gradient-start: #5f8f8b;
+    --active-gradient-end: #3f6f73;
+    --text-color-rgb: 47, 85, 88;
+    --surface-color: rgba(232, 241, 239, 0.96);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
 body.short-break-mode {
+    --primary-color: #9abf9f;
+    --secondary-color: #78a983;
+    --text-color: #4f7658;
+    --active-gradient-start: #9abf9f;
+    --active-gradient-end: #78a983;
+    --text-color-rgb: 79, 118, 88;
+    --surface-color: rgba(238, 247, 239, 0.96);
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 
 body.long-break-mode {
+    --primary-color: #c7b89a;
+    --secondary-color: #9fa985;
+    --text-color: #6f674f;
+    --active-gradient-start: #c7b89a;
+    --active-gradient-end: #9fa985;
+    --text-color-rgb: 111, 103, 79;
+    --surface-color: rgba(245, 240, 230, 0.96);
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 
