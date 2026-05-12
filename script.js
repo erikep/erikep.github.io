@@ -73,6 +73,7 @@ class PomodoroTimer {
         this.startBtn = document.getElementById('start-btn');
         this.pauseBtn = document.getElementById('pause-btn');
         this.resetBtn = document.getElementById('reset-btn');
+        this.testSoundBtn = document.getElementById('test-sound-btn');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.durationInputs = document.querySelectorAll('.duration-input');
         this.progressCircle = document.querySelector('.progress-ring-circle');
@@ -93,6 +94,9 @@ class PomodoroTimer {
         }
         if (this.resetBtn) {
             this.resetBtn.addEventListener('click', () => this.reset());
+        }
+        if (this.testSoundBtn) {
+            this.testSoundBtn.addEventListener('click', () => NotificationManager.playSound());
         }
         
         // Mode selection

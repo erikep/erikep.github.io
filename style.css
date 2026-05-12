@@ -234,6 +234,32 @@ h1 {
     background: rgba(var(--text-color-rgb, 47, 85, 88), 0.14);
 }
 
+.sound-test {
+    margin-bottom: 20px;
+}
+
+.sound-test-btn {
+    padding: 10px 18px;
+    border: 2px solid rgba(var(--text-color-rgb, 47, 85, 88), 0.18);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.sound-test-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(var(--text-color-rgb, 47, 85, 88), 0.35);
+    transform: translateY(-1px);
+}
+
+.sound-test-btn:active {
+    transform: translateY(0);
+}
+
 .session-info {
     color: #888;
     font-size: 1rem;
