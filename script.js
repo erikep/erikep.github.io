@@ -83,6 +83,9 @@ class PomodoroTimer {
         this.enableNotificationsBtn = document.getElementById('enable-notifications-btn');
         this.testNotificationBtn = document.getElementById('test-notification-btn');
         this.notificationPermissionStatus = document.getElementById('notification-permission-status');
+        this.settingsBtn = document.getElementById('settings-btn');
+        this.settingsModal = document.getElementById('settings-modal');
+        this.settingsCloseBtn = document.getElementById('settings-close-btn');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.durationInputs = document.querySelectorAll('.duration-input');
         this.progressCircle = document.querySelector('.progress-ring-circle');
@@ -91,6 +94,36 @@ class PomodoroTimer {
         this.todayTimeEl = document.getElementById('today-time');
         this.weekTimeEl = document.getElementById('week-time');
         this.body = document.body;
+    }
+
+    openSettings() {
+        if (!this.settingsModal) {
+            return;
+        }
+
+        this.updateNotificationPermissionUI();
+
+        if (typeof this.settingsModal.showModal === 'function') {
+            this.settingsModal.showModal();
+        } else {
+            this.settingsModal.setAttribute('open', '');
+        }
+
+        this.settingsCloseBtn?.focus();
+    }
+
+    closeSettings() {
+        if (!this.settingsModal) {
+            return;
+        }
+
+        if (typeof this.settingsModal.close === 'function' && this.settingsModal.open) {
+            this.settingsModal.close();
+        } else {
+            this.settingsModal.removeAttribute('open');
+        }
+
+        this.settingsBtn?.focus();
     }
 
     updateNotificationPermissionUI() {
@@ -175,6 +208,24 @@ class PomodoroTimer {
         if (this.testNotificationBtn) {
             this.testNotificationBtn.addEventListener('click', () => {
                 this.testBrowserNotification();
+            });
+        }
+        if (this.settingsBtn) {
+            this.settingsBtn.addEventListener('click', () => this.openSettings());
+        }
+        if (this.settingsCloseBtn) {
+            this.settingsCloseBtn.addEventListener('click', () => this.closeSettings());
+        }
+        if (this.settingsModal) {
+            this.settingsModal.addEventListener('click', (e) => {
+                // Close when clicking the backdrop (the dialog element itself).
+                if (e.target === this.settingsModal) {
+                    this.closeSettings();
+                }
+            });
+            this.settingsModal.addEventListener('cancel', (e) => {
+                e.preventDefault();
+                this.closeSettings();
             });
         }
         if (this.notificationAlarmSelect) {

@@ -41,6 +41,7 @@ body {
     align-items: stretch;
     flex: 0 0 auto;
     padding-top: 12px;
+    gap: 10px;
 }
 
 .timer-wrapper {
@@ -61,6 +62,101 @@ h1 {
     margin-bottom: 20px;
     font-weight: 700;
     transition: color 0.5s ease;
+}
+
+.settings-btn {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px);
+}
+
+.settings-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+.settings-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.settings-modal {
+    border: none;
+    padding: 0;
+    background: transparent;
+    max-width: calc(100vw - 32px);
+    width: min(420px, 100%);
+}
+
+.settings-modal::backdrop {
+    background: rgba(20, 30, 32, 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.settings-modal-panel {
+    background: var(--surface-color);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    color: var(--text-color);
+}
+
+.settings-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px 12px;
+    border-bottom: 1px solid rgba(var(--text-color-rgb, 47, 85, 88), 0.12);
+}
+
+.settings-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.settings-close-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.08);
+    color: var(--text-color);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.settings-close-btn:hover {
+    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.16);
+}
+
+.settings-modal-body {
+    padding: 18px 20px 22px;
+    text-align: left;
+}
+
+.settings-section + .settings-section {
+    margin-top: 18px;
 }
 
 .mode-selector {
@@ -313,29 +409,20 @@ h1 {
     transition: color 0.5s ease;
 }
 
-.notification-menu {
-    margin-top: 28px;
-    margin-bottom: 8px;
-    padding: 18px 14px;
-    border-radius: 14px;
-    background: rgba(var(--text-color-rgb, 47, 85, 88), 0.06);
-    border: 1px solid rgba(var(--text-color-rgb, 47, 85, 88), 0.12);
-    transition: background 0.5s ease, border-color 0.5s ease;
-}
-
 .notification-label {
     display: block;
     color: var(--text-color);
     font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin: 0 0 12px;
     transition: color 0.5s ease;
 }
 
 .notification-controls {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -351,7 +438,8 @@ h1 {
 }
 
 .notification-select {
-    min-width: 180px;
+    flex: 1 1 160px;
+    min-width: 140px;
     padding: 10px 12px;
 }
 
@@ -378,7 +466,6 @@ h1 {
 }
 
 .browser-notification-panel {
-    margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid rgba(var(--text-color-rgb, 47, 85, 88), 0.12);
 }
@@ -553,6 +640,7 @@ body.long-break-mode {
     
     .notification-controls {
         flex-direction: column;
+        align-items: stretch;
     }
     
     .notification-select,
@@ -560,8 +648,8 @@ body.long-break-mode {
         width: 100%;
     }
 
-    .browser-notification-panel .notification-controls {
-        width: 100%;
+    .settings-modal-body {
+        padding: 16px;
     }
     
     .stat-value {
