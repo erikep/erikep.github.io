@@ -1,10 +1,57 @@
 export class NotificationManager {
+    static #iconUrl = null;
+    static #titleFlashInterval = null;
+    static #originalTitle = null;
+
+    static getPermission() {
+        if (!('Notification' in window)) {
+            return 'unsupported';
+        }
+        return Notification.permission;
+    }
+
+    /**
+     * Must be called from a direct user gesture (button click).
+     * If the site was previously auto-denied, browsers will not prompt again —
+     * the user must reset Notifications for this origin in browser settings.
+     */
     static requestPermission() {
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
+        if (!('Notification' in window)) {
+            return Promise.resolve('unsupported');
+        }
+
+        if (Notification.permission !== 'default') {
+            return Promise.resolve(Notification.permission);
+        }
+
+        return Notification.requestPermission().catch(() => Notification.permission);
+    }
+
+    static getPermissionStatusMessage() {
+        switch (this.getPermission()) {
+            case 'granted':
+                return {
+                    state: 'granted',
+                    text: 'Browser notifications are on. You will get a banner when a session ends.'
+                };
+            case 'denied':
+                return {
+                    state: 'denied',
+                    text: 'Browser notifications are blocked for this site. Use the lock/info icon next to the URL → Site settings → Notifications → Allow, then reload.'
+                };
+            case 'unsupported':
+                return {
+                    state: 'unsupported',
+                    text: 'This browser does not support notifications.'
+                };
+            default:
+                return {
+                    state: 'default',
+                    text: 'Browser notifications are off. Enable them so alerts work when your laptop is muted.'
+                };
         }
     }
-    
+
     static playSound(alarm = 'relaxing-chime') {
         const alarms = {
             original: () => this.playOriginalBeep(),
@@ -182,13 +229,141 @@ export class NotificationManager {
 
         setTimeout(() => audioContext.close(), duration * 1000 + 120);
     }
-    
-    static showNotification(title, body) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(title, {
-                body: body,
-                icon: '🔔'
-            });
+
+    /** PNG data URL so icons work on GitHub Pages without a separate asset path. */
+    static getIconUrl() {
+        if (this.#iconUrl) {
+            return this.#iconUrl;
+        }
+
+        const size = 128;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            return undefined;
+        }
+
+        ctx.clearRect(0, 0, size, size);
+
+        // Soft tomato body
+        const gradient = ctx.createRadialGradient(48, 44, 12, 64, 70, 56);
+        gradient.addColorStop(0, '#e8785a');
+        gradient.addColorStop(1, '#b84a32');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(64, 72, 48, 42, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Leaf
+        ctx.fillStyle = '#4a7a3a';
+        ctx.beginPath();
+        ctx.ellipse(64, 28, 18, 10, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(78, 32, 14, 8, 0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Stem
+        ctx.strokeStyle = '#3d5f30';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(64, 38);
+        ctx.lineTo(64, 22);
+        ctx.stroke();
+
+        this.#iconUrl = canvas.toDataURL('image/png');
+        return this.#iconUrl;
+    }
+
+    static showNotification(title, body, options = {}) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') {
+            return false;
+        }
+
+        const {
+            tag = `pomodoro-${Date.now()}`,
+            requireInteraction = true
+        } = options;
+
+        const attempts = [
+            {
+                body,
+                icon: this.getIconUrl(),
+                tag,
+                requireInteraction,
+                silent: false
+            },
+            // Fallback if icon/options are rejected by the browser.
+            {
+                body,
+                tag,
+                requireInteraction
+            },
+            {
+                body
+            }
+        ];
+
+        for (const opts of attempts) {
+            try {
+                const notification = new Notification(title, opts);
+
+                notification.onclick = () => {
+                    window.focus();
+                    this.stopTitleFlash();
+                    notification.close();
+                };
+
+                notification.onerror = () => {
+                    console.error('Notification failed to display');
+                };
+
+                return true;
+            } catch (error) {
+                console.warn('Notification attempt failed, trying simpler options:', error);
+            }
+        }
+
+        return false;
+    }
+
+    static startTitleFlash(message) {
+        this.stopTitleFlash();
+        this.#originalTitle = document.title;
+        let showAlert = false;
+        document.title = `⏰ ${message}`;
+
+        this.#titleFlashInterval = setInterval(() => {
+            showAlert = !showAlert;
+            document.title = showAlert
+                ? `⏰ ${message}`
+                : (this.#originalTitle || 'Pomodoro Timer');
+        }, 1000);
+    }
+
+    static stopTitleFlash() {
+        if (this.#titleFlashInterval) {
+            clearInterval(this.#titleFlashInterval);
+            this.#titleFlashInterval = null;
+        }
+        if (this.#originalTitle !== null) {
+            document.title = this.#originalTitle;
+            this.#originalTitle = null;
+        }
+    }
+
+    /**
+     * OS banner when allowed; tab-title flash when the page is hidden
+     * (covers muted devices and denied notification permission).
+     */
+    static alertUser(title, body) {
+        this.showNotification(title, body, { tag: 'pomodoro-complete' });
+
+        if (document.hidden) {
+            this.startTitleFlash(title);
         }
     }
 }

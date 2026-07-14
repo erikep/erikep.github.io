@@ -377,6 +377,37 @@ h1 {
     transform: translateY(0);
 }
 
+.browser-notification-panel {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(var(--text-color-rgb, 47, 85, 88), 0.12);
+}
+
+.notification-permission-status {
+    margin: 0 0 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.45;
+    opacity: 0.9;
+    transition: color 0.5s ease;
+}
+
+.notification-permission-status[data-state="granted"] {
+    opacity: 1;
+}
+
+.notification-permission-status[data-state="denied"] {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.notification-test-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
 .feedback-btn {
     display: inline-block;
     padding: 8px 16px;
@@ -526,6 +557,10 @@ body.long-break-mode {
     
     .notification-select,
     .notification-test-btn {
+        width: 100%;
+    }
+
+    .browser-notification-panel .notification-controls {
         width: 100%;
     }
     

@@ -56,6 +56,7 @@ class PomodoroTimer {
         if (this.notificationAlarmSelect) {
             this.notificationAlarmSelect.value = this.notificationAlarm;
         }
+        this.updateNotificationPermissionUI();
         
         // Clean up old data and update display
         StorageManager.cleanupOldFocusData();
@@ -79,6 +80,9 @@ class PomodoroTimer {
         this.resetBtn = document.getElementById('reset-btn');
         this.notificationAlarmSelect = document.getElementById('notification-alarm');
         this.testAlarmBtn = document.getElementById('test-alarm-btn');
+        this.enableNotificationsBtn = document.getElementById('enable-notifications-btn');
+        this.testNotificationBtn = document.getElementById('test-notification-btn');
+        this.notificationPermissionStatus = document.getElementById('notification-permission-status');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.durationInputs = document.querySelectorAll('.duration-input');
         this.progressCircle = document.querySelector('.progress-ring-circle');
@@ -87,6 +91,64 @@ class PomodoroTimer {
         this.todayTimeEl = document.getElementById('today-time');
         this.weekTimeEl = document.getElementById('week-time');
         this.body = document.body;
+    }
+
+    updateNotificationPermissionUI() {
+        const status = NotificationManager.getPermissionStatusMessage();
+
+        if (this.notificationPermissionStatus) {
+            this.notificationPermissionStatus.textContent = status.text;
+            this.notificationPermissionStatus.dataset.state = status.state;
+        }
+
+        if (this.enableNotificationsBtn) {
+            const canPrompt = status.state === 'default';
+            this.enableNotificationsBtn.disabled = !canPrompt;
+            this.enableNotificationsBtn.textContent = status.state === 'granted'
+                ? 'Browser Notifications Enabled'
+                : status.state === 'denied'
+                    ? 'Notifications Blocked — Use Browser Settings'
+                    : 'Enable Browser Notifications';
+        }
+
+        if (this.testNotificationBtn) {
+            this.testNotificationBtn.disabled = status.state !== 'granted';
+        }
+    }
+
+    async enableBrowserNotifications() {
+        const permission = await NotificationManager.requestPermission();
+        this.updateNotificationPermissionUI();
+
+        if (permission === 'granted') {
+            this.testBrowserNotification();
+        }
+    }
+
+    testBrowserNotification() {
+        const sent = NotificationManager.showNotification(
+            'Test notification',
+            'If you can read this, browser banners are working.',
+            { tag: `pomodoro-test-${Date.now()}`, requireInteraction: true }
+        );
+
+        if (!this.notificationPermissionStatus) {
+            return;
+        }
+
+        if (!sent) {
+            this.notificationPermissionStatus.textContent =
+                'Could not create a notification. Check the browser console for errors.';
+            this.notificationPermissionStatus.dataset.state = 'denied';
+            return;
+        }
+
+        // macOS often suppresses banners while this tab is focused; they still appear
+        // in Notification Center, and show as banners when the tab is in the background.
+        this.notificationPermissionStatus.dataset.state = 'granted';
+        this.notificationPermissionStatus.textContent = document.hidden
+            ? 'Test notification sent. Look for the OS banner.'
+            : 'Test notification sent. Switch to another app/tab for ~2 seconds, or check Notification Center — macOS often hides banners while this tab is focused.';
     }
     
     setupEventListeners() {
@@ -103,6 +165,16 @@ class PomodoroTimer {
         if (this.testAlarmBtn) {
             this.testAlarmBtn.addEventListener('click', () => {
                 NotificationManager.playSound(this.notificationAlarm);
+            });
+        }
+        if (this.enableNotificationsBtn) {
+            this.enableNotificationsBtn.addEventListener('click', () => {
+                this.enableBrowserNotifications();
+            });
+        }
+        if (this.testNotificationBtn) {
+            this.testNotificationBtn.addEventListener('click', () => {
+                this.testBrowserNotification();
             });
         }
         if (this.notificationAlarmSelect) {
@@ -144,12 +216,16 @@ class PomodoroTimer {
         
         // Tab visibility and focus events
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && this.timer.isRunning) {
-                this.syncTimer();
+            if (!document.hidden) {
+                NotificationManager.stopTitleFlash();
+                if (this.timer.isRunning) {
+                    this.syncTimer();
+                }
             }
         });
         
         window.addEventListener('focus', () => {
+            NotificationManager.stopTitleFlash();
             if (this.timer.isRunning) {
                 this.syncTimer();
             }
@@ -168,6 +244,10 @@ class PomodoroTimer {
     }
     
     start() {
+        // Best-effort prompt on Start; dedicated Enable button is the reliable path.
+        NotificationManager.requestPermission().then(() => {
+            this.updateNotificationPermissionUI();
+        });
         this.timer.start();
         this.ui.setButtonStates(true);
         this.updateStatus();
@@ -245,9 +325,13 @@ class PomodoroTimer {
         this.ui.updateDurationInputsState(false);
         
         NotificationManager.playSound(this.notificationAlarm);
+
+        const completedMode = this.timer.mode;
+        let title;
+        let body;
         
         // Update session count for completed pomodoros
-        if (this.timer.mode === 'pomodoro') {
+        if (completedMode === 'pomodoro') {
             this.sessionCount++;
             this.ui.updateSessionCount(this.sessionCount);
             
@@ -262,16 +346,19 @@ class PomodoroTimer {
                 this.setMode('short-break');
                 this.timerStatus.textContent = 'Take a Short Break!';
             }
+
+            title = 'Pomodoro Complete!';
+            body = 'Time for a break. Click to return to the timer.';
         } else {
             // Auto-switch back to pomodoro after break
             this.setMode('pomodoro');
             this.timerStatus.textContent = 'Ready to Focus';
+
+            title = 'Break Complete!';
+            body = 'Time to get back to work. Click to return to the timer.';
         }
         
-        // Show notification
-        const title = this.timer.mode === 'pomodoro' ? 'Break Complete!' : 'Pomodoro Complete!';
-        const body = this.timer.mode === 'pomodoro' ? 'Time for a break!' : 'Time to get back to work!';
-        NotificationManager.showNotification(title, body);
+        NotificationManager.alertUser(title, body);
     }
     
     trackFocusTime(durationSeconds) {
@@ -306,9 +393,6 @@ class PomodoroTimer {
         this.ui.updateDisplay(state.timeLeft, state.durations[state.mode]);
     }
 }
-
-// Request notification permission on load
-NotificationManager.requestPermission();
 
 // Initialize timer when page loads
 document.addEventListener('DOMContentLoaded', () => {
